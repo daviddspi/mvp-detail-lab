@@ -985,7 +985,7 @@ const Testimonials = () => {
           <div className="absolute inset-y-0 right-0 w-24 sm:w-64 bg-gradient-to-l from-secondary via-secondary/80 to-transparent z-30 pointer-events-none hidden md:block" />
  
           <motion.div 
-            drag="x"
+            drag={typeof window !== 'undefined' && window.innerWidth < 1024 ? "x" : false}
             dragConstraints={{ left: 0, right: 0 }}
             onDragEnd={(_, info) => {
               const threshold = 50;
@@ -1046,20 +1046,26 @@ const Testimonials = () => {
           </motion.div>
         </div>
 
-        {/* Pagination Dots */}
-        <div className="mt-2 flex justify-center gap-3 sm:gap-4">
-          {reviews.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => {
-                const currentRel = index % reviews.length;
-                setIndex(index + (idx - currentRel));
-              }}
-              className={`h-1 cursor-pointer transition-all duration-500 rounded-none ${
-                (index % reviews.length) === idx ? 'w-12 sm:w-16 bg-primary' : 'w-4 sm:w-6 bg-white/10 hover:bg-white/20'
-              }`}
-            />
-          ))}
+        {/* Premium Testimonial Pagination */}
+        <div className="mt-8 flex justify-center gap-10">
+          {reviews.map((_, idx) => {
+            const isActive = (index % reviews.length) === idx;
+            return (
+              <button
+                key={idx}
+                onClick={() => {
+                  const currentRel = index % reviews.length;
+                  setIndex(index + (idx - currentRel));
+                }}
+                className="group flex flex-col items-center gap-2 cursor-pointer"
+              >
+                <span className={`text-[11px] font-black tracking-widest transition-all duration-300 ${isActive ? 'text-white' : 'text-white/20 group-hover:text-white/40'}`}>
+                  0{idx + 1}
+                </span>
+                <div className={`h-0.5 transition-all duration-500 ease-out ${isActive ? 'w-8 bg-primary' : 'w-0 bg-white/10 group-hover:w-4'}`} />
+              </button>
+            );
+          })}
         </div>
       </div>
     </motion.section>
@@ -1232,11 +1238,11 @@ const PricingCard = ({ plan, idx, vehicleClass }: any) => {
               transition={{ duration: 0.2 }}
               className="flex items-baseline gap-1"
             >
-              <span className={`text-5xl md:text-6xl font-black tracking-tighter tabular-nums ${isBasic ? 'text-white' : 'text-white'}`}>
+              <span className={`text-4xl md:text-5xl font-black tracking-tighter tabular-nums ${isBasic ? 'text-white' : 'text-white'}`}>
                 {plan.prices ? plan.prices[vehicleClass].toLocaleString() : plan.price.replace('od ', '').replace(' EUR', '')}
               </span>
-              <span className={`text-2xl font-black ml-1 uppercase ${isBasic ? 'text-white/90' : 'text-primary'}`}>
-                {plan.currency === 'RSD' ? 'din' : '€'}
+              <span className={`text-xl font-black ml-1 uppercase ${isBasic ? 'text-white/90' : 'text-primary'}`}>
+                {plan.currency === 'RSD' ? 'RSD' : '€'}
               </span>
             </motion.div>
           </AnimatePresence>
