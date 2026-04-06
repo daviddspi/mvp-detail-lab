@@ -921,8 +921,8 @@ const Testimonials = () => {
   // Starting at the middle set for seamless infinite scrolling
   const [index, setIndex] = useState(reviews.length * 2);
   const [dimensions, setDimensions] = useState({
-    cardWidth: typeof window !== 'undefined' && window.innerWidth < 768 ? 320 : 450,
-    gap: typeof window !== 'undefined' && window.innerWidth < 768 ? 30 : 60
+    cardWidth: typeof window !== 'undefined' ? (window.innerWidth < 768 ? window.innerWidth * 0.85 : 450) : 450,
+    gap: typeof window !== 'undefined' ? (window.innerWidth < 768 ? 20 : 60) : 60
   });
 
   const step = dimensions.cardWidth + dimensions.gap;
@@ -932,8 +932,8 @@ const Testimonials = () => {
     const handleResize = () => {
       const isMobile = window.innerWidth < 768;
       setDimensions({
-        cardWidth: isMobile ? 320 : 450,
-        gap: isMobile ? 30 : 60
+        cardWidth: isMobile ? window.innerWidth * 0.85 : 450,
+        gap: isMobile ? 20 : 60
       });
     };
 
@@ -986,9 +986,11 @@ const Testimonials = () => {
  
           <motion.div 
             drag={typeof window !== 'undefined' && window.innerWidth < 1024 ? "x" : false}
-            dragConstraints={{ left: 0, right: 0 }}
+            dragConstraints={{ left: -100, right: 100 }}
+            dragElastic={0.2}
+            dragDirectionLock
             onDragEnd={(_, info) => {
-              const threshold = 50;
+              const threshold = 40;
               if (info.offset.x < -threshold) {
                 setIndex(prev => prev + 1);
               } else if (info.offset.x > threshold) {
@@ -999,8 +1001,10 @@ const Testimonials = () => {
               x: -(index * step) - (dimensions.cardWidth / 2)
             }}
             transition={{ 
-              duration: 1.2, 
-              ease: [0.32, 0.72, 0, 1] 
+              type: "spring",
+              stiffness: 100,
+              damping: 20,
+              mass: 1
             }}
             className="flex items-center absolute left-1/2 cursor-grab active:cursor-grabbing"
             style={{ 
