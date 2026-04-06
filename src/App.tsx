@@ -921,8 +921,8 @@ const Testimonials = () => {
   // Starting at the middle set for seamless infinite scrolling
   const [index, setIndex] = useState(reviews.length * 2);
   const [dimensions, setDimensions] = useState({
-    cardWidth: typeof window !== 'undefined' ? (window.innerWidth < 768 ? window.innerWidth * 0.85 : 450) : 450,
-    gap: typeof window !== 'undefined' ? (window.innerWidth < 768 ? 20 : 60) : 60
+    cardWidth: typeof window !== 'undefined' && window.innerWidth < 768 ? 320 : 450,
+    gap: typeof window !== 'undefined' && window.innerWidth < 768 ? 30 : 60
   });
 
   const step = dimensions.cardWidth + dimensions.gap;
@@ -932,8 +932,8 @@ const Testimonials = () => {
     const handleResize = () => {
       const isMobile = window.innerWidth < 768;
       setDimensions({
-        cardWidth: isMobile ? window.innerWidth * 0.85 : 450,
-        gap: isMobile ? 20 : 60
+        cardWidth: isMobile ? 320 : 450,
+        gap: isMobile ? 30 : 60
       });
     };
 
@@ -985,18 +985,7 @@ const Testimonials = () => {
           <div className="absolute inset-y-0 right-0 w-24 sm:w-64 bg-gradient-to-l from-secondary via-secondary/80 to-transparent z-30 pointer-events-none hidden md:block" />
  
           <motion.div 
-            drag={typeof window !== 'undefined' && window.innerWidth < 1024 ? "x" : false}
-            dragConstraints={{ left: -100, right: 100 }}
-            dragElastic={0.2}
-            dragDirectionLock
-            onDragEnd={(_, info) => {
-              const threshold = 40;
-              if (info.offset.x < -threshold) {
-                setIndex(prev => prev + 1);
-              } else if (info.offset.x > threshold) {
-                setIndex(prev => prev - 1);
-              }
-            }}
+            drag={false}
             animate={{ 
               x: -(index * step) - (dimensions.cardWidth / 2)
             }}
